@@ -24,15 +24,15 @@ app.directive('debounce', {
  * 传递参数：<el-button v-throttle="[()=>reset(param),`click`,300]">刷新</el-button>
  */
 app.directive('throttle', {
-	inserted: function (el, binding) {
-		let [fn, event = "click", time = 300] = binding.value
-		let now, preTime
+	inserted: function (el, binding, vnode) {
+		let [fn, event = "click", time = 300] = binding.value;
+		let now, preTime;
 		el.addEventListener(event, () => {
-			now = new Date()
+			now = new Date();
 			if (!preTime || now - preTime > time) {
-				preTime = now
-				fn()
+				preTime = now;
+				fn.call(vnode.context); // 绑定 Vue 实例的上下文
 			}
-		})
+		});
 	}
-})
+});

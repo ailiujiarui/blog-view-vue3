@@ -70,7 +70,7 @@
 				<el-switch v-model="commentForm.notice"></el-switch>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" size="medium" v-throttle="[postForm,`click`,3000]">发表评论</el-button>
+				<el-button type="primary" size="medium" @click="postForm">发表评论</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -83,6 +83,7 @@
 	import tvMapper from '@/plugins/tvMapper.json'
 	import aruMapper from '@/plugins/aruMapper.json'
 	import paopaoMapper from '@/plugins/paopaoMapper.json'
+  import _ from 'lodash';
 
 	const validateWebsite = (rule, value, callback) => {
 		if (value) {
@@ -153,35 +154,35 @@
 				this.textarea.focus()
 				this.textarea.setSelectionRange(this.start, this.end)
 			},
-			postForm() {
-				const adminToken = window.localStorage.getItem('adminToken')
-				if (adminToken) {
-					//博主登录后，localStorage中会存储token，在后端设置属性，可以不校验昵称、邮箱
-					if (this.commentForm.content === '' || this.commentForm.content.length > 250) {
-						return this.$notify({
-							title: '评论失败',
-							message: '评论内容有误',
-							type: 'warning'
-						})
-					} else {
-						return this.$store.dispatch('submitCommentForm', adminToken)
-					}
-				}
-				const blogToken = window.localStorage.getItem(`blog${this.commentQuery.blogId}`)
-				this.$refs.formRef.validate(valid => {
-					if (!valid || this.commentForm.content === '' || this.commentForm.content.length > 250) {
-						this.$notify({
-							title: '评论失败',
-							message: '请正确填写评论',
-							type: 'warning'
-						})
-					} else {
-						this.$store.dispatch('submitCommentForm', blogToken ? blogToken : '')
-					}
-				})
-			}
-		}
-	}
+      postForm: _.throttle(function() {
+        const adminToken = window.localStorage.getItem('adminToken');
+        if (adminToken) {
+          if (this.commentForm.content === '' || this.commentForm.content.length > 250) {
+            return this.$notify({
+              title: '评论失败',
+              message: '评论内容有误',
+              type: 'warning'
+            });
+          } else {
+            return this.$store.dispatch('submitCommentForm', adminToken);
+          }
+        }
+        const blogToken = window.localStorage.getItem(`blog${this.commentQuery.blogId}`);
+        this.$refs.formRef.validate(valid => {
+          if (!valid || this.commentForm.content === '' || this.commentForm.content.length > 250) {
+            this.$notify({
+              title: '评论失败',
+              message: '请正确填写评论',
+              type: 'warning'
+            });
+          } else {
+            this.$store.dispatch('submitCommentForm', blogToken ? blogToken : '');
+          }
+        });
+      }, 3000), // 设置节流时间为 3000 毫秒
+    }
+
+  }
 </script>
 
 <style>

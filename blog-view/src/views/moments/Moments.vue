@@ -53,8 +53,7 @@
 				return function (id) {
 					return this.likeMomentIds.indexOf(id) > -1
 				}
-			},
-      dateFromNow:dateFromNow
+			}
 		},
 		watch: {
 			likeMomentIds(newValue) {
@@ -115,6 +114,9 @@
 						type: 'error'
 					})
 				})
+      },
+      dateFromNow(date) {
+        return dateFromNow(date);
 			}
 		}
 	}

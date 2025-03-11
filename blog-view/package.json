@@ -16,6 +16,7 @@
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "element-plus": "^2.2.2",
+    "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "nprogress": "^0.2.0",
     "prismjs": "^1.28.0",
